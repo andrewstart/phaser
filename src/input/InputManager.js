@@ -912,6 +912,14 @@ var InputManager = new Class({
 
             if (gameObject.parentContainer)
             {
+                var root = gameObject.parentContainer;
+                while (root.parentContainer)
+                {
+                    root = root.parentContainer;
+                }
+                px = tempPoint.x + (csx * root.scrollFactorX) - csx;
+                py = tempPoint.y + (csy * root.scrollFactorY) - csy;
+
                 gameObject.getWorldTransformMatrix(matrix, parentMatrix);
 
                 matrix.applyInverse(px, py, point);
