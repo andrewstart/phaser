@@ -66,7 +66,8 @@ var WebGLRenderer = new Class({
             premultipliedAlpha: gameConfig.premultipliedAlpha,
             stencil: true,
             failIfMajorPerformanceCaveat: gameConfig.failIfMajorPerformanceCaveat,
-            powerPreference: gameConfig.powerPreference
+            powerPreference: gameConfig.powerPreference,
+            preserveDrawingBuffer: gameConfig.preserveDrawingBuffer
         };
 
         /**
@@ -420,7 +421,7 @@ var WebGLRenderer = new Class({
          * Stores the supported WebGL texture compression formats.
          *
          * @name Phaser.Renderer.WebGL.WebGLRenderer#compression
-         * @type {object}
+         * @type {Phaser.Types.Renderer.WebGL.WebGLTextureCompression}
          * @since 3.8.0
          */
         this.compression = {
@@ -2172,14 +2173,14 @@ var WebGLRenderer = new Class({
      */
     deleteTexture: function (texture, reset)
     {
+        if (reset)
+        {
+            this.resetTextures(true);
+        }
+
         if (texture)
         {
             this.gl.deleteTexture(texture);
-        }
-
-        if (reset)
-        {
-            this.resetTextures();
         }
 
         return this;

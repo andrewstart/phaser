@@ -26,7 +26,7 @@ var Vector2 = require('../../math/Vector2');
  *
  * The position of the Game Object automatically becomes relative to the position of the Container.
  *
- * The origin of a Container is 0x0 (in local space) and that cannot be changed. The children you add to the
+ * The transform point of a Container is 0x0 (in local space) and that cannot be changed. The children you add to the
  * Container should be positioned with this value in mind. I.e. you should treat 0x0 as being the center of
  * the Container, and position children positively and negative around it as required.
  *
@@ -444,32 +444,14 @@ var Container = new Class({
 
         if (this.exclusive)
         {
-            if (gameObject.displayList)
-            {
-                gameObject.displayList.remove(gameObject);
-            }
-
             if (gameObject.parentContainer)
             {
                 gameObject.parentContainer.remove(gameObject);
             }
 
-            if (this.displayList)
-            {
-                gameObject.displayList = this.displayList;
-            }
-            else
-            {
-                gameObject.displayList = this.scene.sys.displayList;
-            }
+            gameObject.removeFromDisplayList();
 
             gameObject.parentContainer = this;
-        }
-
-        //  Is only on the Display List via this Container
-        if (!this.scene.sys.displayList.exists(gameObject))
-        {
-            gameObject.emit(Events.ADDED_TO_SCENE, gameObject, this.scene);
         }
     },
 
@@ -489,12 +471,8 @@ var Container = new Class({
         if (this.exclusive)
         {
             gameObject.parentContainer = null;
-        }
 
-        //  Is only on the Display List via this Container
-        if (!this.scene.sys.displayList.exists(gameObject))
-        {
-            gameObject.emit(Events.REMOVED_FROM_SCENE, gameObject, this.scene);
+            gameObject.addToDisplayList();
         }
     },
 
@@ -801,6 +779,46 @@ var Container = new Class({
     moveTo: function (child, index)
     {
         ArrayUtils.MoveTo(this.list, child, index);
+
+        return this;
+    },
+
+    /**
+     * Moves a Game Object above another one within this Container.
+     *
+     * These 2 Game Objects must already be children of this Container.
+     *
+     * @method Phaser.GameObjects.Container#moveAbove
+     * @since 3.55.0
+     *
+     * @param {Phaser.GameObjects.GameObject} child1 - The Game Object to move above base Game Object.
+     * @param {Phaser.GameObjects.GameObject} child2 - The base Game Object.
+     *
+     * @return {this} This Container instance.
+     */
+    moveAbove: function (child1, child2)
+    {
+        ArrayUtils.MoveAbove(this.list, child1, child2);
+
+        return this;
+    },
+
+    /**
+     * Moves a Game Object below another one within this Container.
+     *
+     * These 2 Game Objects must already be children of this Container.
+     *
+     * @method Phaser.GameObjects.Container#moveBelow
+     * @since 3.55.0
+     *
+     * @param {Phaser.GameObjects.GameObject} child1 - The Game Object to move below base Game Object.
+     * @param {Phaser.GameObjects.GameObject} child2 - The base Game Object.
+     *
+     * @return {this} This Container instance.
+     */
+    moveBelow: function (child1, child2)
+    {
+        ArrayUtils.MoveBelow(this.list, child1, child2);
 
         return this;
     },
